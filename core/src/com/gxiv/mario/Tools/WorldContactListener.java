@@ -7,6 +7,7 @@ import com.gxiv.mario.Sprites.Enemy;
 import com.gxiv.mario.Sprites.InteractiveTileObject;
 import com.gxiv.mario.Sprites.Items.Item;
 import com.gxiv.mario.Sprites.Mario;
+import com.gxiv.mario.Sprites.Others.FireBall;
 
 public class WorldContactListener implements ContactListener {
     @Override
@@ -26,9 +27,9 @@ public class WorldContactListener implements ContactListener {
                 break;
             case MarioBros.ENEMY_HEAD_BIT | MarioBros.MARIO_BIT:
                 if(fixA.getFilterData().categoryBits == MarioBros.ENEMY_HEAD_BIT)
-                    ((Enemy) fixA.getUserData()).hitOnHead();
+                    ((Enemy)fixA.getUserData()).hitOnHead((Mario) fixB.getUserData());
                 else
-                    ((Enemy) fixB.getUserData()).hitOnHead();
+                    ((Enemy)fixB.getUserData()).hitOnHead((Mario) fixA.getUserData());
                 break;
             case MarioBros.ENEMY_BIT | MarioBros.OBJECT_BIT:
                 if(fixA.getFilterData().categoryBits == MarioBros.ENEMY_BIT)
@@ -39,9 +40,9 @@ public class WorldContactListener implements ContactListener {
             case MarioBros.MARIO_BIT | MarioBros.ENEMY_BIT:
                 Gdx.app.log("Mario", "DIED");
                 if(fixA.getFilterData().categoryBits == MarioBros.MARIO_BIT)
-                    ((Mario) fixA.getUserData()).hit();
+                    ((Mario) fixA.getUserData()).hit((Enemy) fixB.getUserData());
                 else
-                    ((Mario) fixB.getUserData()).hit();
+                    ((Mario) fixB.getUserData()).hit((Enemy) fixA.getUserData());
                 break;
             case MarioBros.ENEMY_BIT | MarioBros.ENEMY_BIT:
                 ((Enemy) fixA.getUserData()).reverseVelocity(true, false);
@@ -80,9 +81,15 @@ public class WorldContactListener implements ContactListener {
                         ((Item) fixB.getUserData()).use((Mario) fixA.getUserData());
 
                 break;
+            case MarioBros.FIREBALL_BIT | MarioBros.OBJECT_BIT:
+                if(fixA.getFilterData().categoryBits == MarioBros.FIREBALL_BIT)
+                    ((FireBall)fixA.getUserData()).setToDestroy();
+                else
+                    ((FireBall)fixB.getUserData()).setToDestroy();
+                break;
+        }
 
         }
-    }
 
     @Override
     public void endContact(Contact contact) {

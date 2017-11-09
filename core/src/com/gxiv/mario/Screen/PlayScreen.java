@@ -120,6 +120,8 @@ public class PlayScreen implements Screen {
                 player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2)
                 player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+                player.fire();
         }
 
     }
@@ -130,7 +132,7 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
         player.update(dt);
-        for(Enemy enemy : creator.getGoombas()){
+        for(Enemy enemy : creator.getEnemy()){
             enemy.update(dt);
             if(enemy.getX() < player.getX() + 224 / MarioBros.PPM)
                 enemy.b2body.setActive(true);
@@ -162,7 +164,7 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
         player.draw(game.batch);
-        for(Enemy enemy : creator.getGoombas())
+        for(Enemy enemy : creator.getEnemy())
             enemy.draw(game.batch);
         for(Item item: items){
             item.draw(game.batch);
@@ -221,4 +223,5 @@ public class PlayScreen implements Screen {
         b2dr.dispose();
         hud.dispose();
     }
+    public Hud getHud(){ return hud; }
 }

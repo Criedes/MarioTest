@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Array;
 import com.gxiv.mario.MarioBros;
 import com.gxiv.mario.Scenes.Hud;
 import com.gxiv.mario.Screen.PlayScreen;
+import com.gxiv.mario.Sprites.Enemies.Turtle;
 
 
 public class Goomba extends com.gxiv.mario.Sprites.Enemy{
@@ -94,7 +95,15 @@ public class Goomba extends com.gxiv.mario.Sprites.Enemy{
     }
 
     @Override
-    public void hitOnHead() {
+    public void hitByEnemy(com.gxiv.mario.Sprites.Enemy enemy) {
+        if(enemy instanceof Turtle && ((Turtle) enemy).currentState == Turtle.State.MOVING_SHELL)
+            setToDestroy = true;
+        else
+            reverseVelocity(true, false);
+    }
+
+    @Override
+    public void hitOnHead(Mario mario) {
         setToDestroy = true;
         MarioBros.manager.get("audio/sounds/stomp.wav", Sound.class).play();
     }

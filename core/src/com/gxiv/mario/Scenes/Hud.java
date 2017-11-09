@@ -18,7 +18,7 @@ public class Hud implements Disposable{
     private int worldTimer;
     private float timeCount;
     private static int score;
-
+    private boolean timeUp;
     private Label countdownLabel;
     private static Label scoreLabel;
     private Label timeLabel;
@@ -29,6 +29,7 @@ public class Hud implements Disposable{
         worldTimer = 300;
         timeCount = 0;
         score = 0;
+        timeUp = false;
 
         viewport = new FillViewport(MarioBros.V_WIDTH, MarioBros.V_HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, sb);
@@ -58,21 +59,24 @@ public class Hud implements Disposable{
     public void update(float dt){
         timeCount += dt;
         if(timeCount >= 1){
-            worldTimer--;
+            if (worldTimer > 0) {
+                worldTimer--;
+            } else {
+                timeUp = true;
+            }
             countdownLabel.setText(String.format("%03d", worldTimer));
             timeCount = 0;
         }
-
     }
 
     public static void addScore(int value){
         score += value;
         scoreLabel.setText(String.format("%06d", score));
-
     }
 
     @Override
-    public void dispose() {
-        stage.dispose();
-    }
+    public void dispose() { stage.dispose(); }
+
+    public boolean isTimeUp() { return timeUp; }
+
 }
