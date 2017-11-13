@@ -40,6 +40,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class PlayScreen implements Screen {
     private MarioBros game;
     private TextureAtlas atlas;
+    public static boolean alreadyDestroyed = false;
 
     private OrthographicCamera gamecam;
     private Viewport gamePort;
@@ -60,6 +61,8 @@ public class PlayScreen implements Screen {
     private Array<Item> items;
     private LinkedBlockingDeque<ItemDef> itemsToSpawn;
 
+    private int count;
+
     public PlayScreen(MarioBros game){
         atlas = new TextureAtlas("Mario_and_Enemies.pack");
 
@@ -68,8 +71,10 @@ public class PlayScreen implements Screen {
         gamePort = new FitViewport(MarioBros.V_WIDTH / MarioBros.PPM, MarioBros.V_HEIGHT / MarioBros.PPM, gamecam);
         hud = new Hud(game.batch);
 
+        count = 0;
+
         mapLoader = new TmxMapLoader();
-        map = mapLoader.load("level1.tmx");
+        map = mapLoader.load("map1.tmx");
         renderer = new OrthogonalTiledMapRenderer(map, 1/ MarioBros.PPM);
         gamecam.position.set(gamePort.getWorldWidth() / 2 , gamePort.getWorldHeight() / 2, 0);
 
@@ -114,12 +119,28 @@ public class PlayScreen implements Screen {
 
     public void handleInput(float dt){
         if(!player.isDead()) {
-            if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && player.getState() != Mario.State.JUMPING && player.getState() != Mario.State.FALLING)
-                player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
-            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2)
+            if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && count < 2 ){
+                if(count == 0){
+                    player.b2body.applyLinearImpulse(new Vector2(0, 4f), player.b2body.getWorldCenter(), true);
+                    count += 1;
+                }
+                else {
+                    player.b2body.applyLinearImpulse(new Vector2(0, 2.5f), player.b2body.getWorldCenter(), true);
+                    count += 1;
+                }
+
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && player.b2body.getLinearVelocity().x <= 2){
                 player.b2body.applyLinearImpulse(new Vector2(0.1f, 0), player.b2body.getWorldCenter(), true);
-            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2)
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && player.b2body.getLinearVelocity().x >= -2){
                 player.b2body.applyLinearImpulse(new Vector2(-0.1f, 0), player.b2body.getWorldCenter(), true);
+
+            }
+            if ((player.getState() == Mario.State.STANDING || player.getState() == Mario.State.RUNNING))
+                count = 0;
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+                player.fire();
         }
 
     }
@@ -130,14 +151,14 @@ public class PlayScreen implements Screen {
         world.step(1/60f, 6, 2);
 
         player.update(dt);
-        for(Enemy enemy : creator.getGoombas()){
-            enemy.update(dt);
-            if(enemy.getX() < player.getX() + 224 / MarioBros.PPM)
-                enemy.b2body.setActive(true);
-        }
+//        for(Enemy enemy : creator.getGoombas()){
+//            enemy.update(dt);
+//            if(enemy.getX() < player.getX() + 224 / MarioBros.PPM)
+//                enemy.b2body.setActive(true);
+//        }
 
-        for(Item item : items)
-            item.update(dt);
+//        for(Item item : items)
+//            item.update(dt);
         hud.update(dt);
 
         if(player.currentState != Mario.State.DEAD) {
@@ -162,11 +183,11 @@ public class PlayScreen implements Screen {
         game.batch.setProjectionMatrix(gamecam.combined);
         game.batch.begin();
         player.draw(game.batch);
-        for(Enemy enemy : creator.getGoombas())
-            enemy.draw(game.batch);
-        for(Item item: items){
-            item.draw(game.batch);
-        }
+//        for(Enemy enemy : creator.getGoombas())
+//            enemy.draw(game.batch);
+//        for(Item item: items){
+//            item.draw(game.batch);
+//        }
         game.batch.end();
 
         game.batch.setProjectionMatrix(hud.stage.getCamera().combined);

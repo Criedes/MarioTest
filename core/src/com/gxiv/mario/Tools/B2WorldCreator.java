@@ -23,7 +23,7 @@ public class B2WorldCreator {
         TiledMap map = screen.getMap();
 
         //create ground fixed body
-        for(RectangleMapObject object: map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)){
+        for(RectangleMapObject object: map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)){
             Rectangle rect = object.getRectangle();
             bdef.type = BodyDef.BodyType.StaticBody;
             bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM, (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM);
@@ -33,7 +33,7 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
         //create pipe fixed body
-        for(RectangleMapObject object: map.getLayers().get(5).getObjects().getByType(RectangleMapObject.class)){
+        for(RectangleMapObject object: map.getLayers().get(4).getObjects().getByType(RectangleMapObject.class)){
             Rectangle rect = object.getRectangle();
             bdef.type = BodyDef.BodyType.StaticBody;
             bdef.position.set((rect.getX() + rect.getWidth() / 2) / MarioBros.PPM, (rect.getY() + rect.getHeight() / 2) / MarioBros.PPM);
@@ -44,25 +44,25 @@ public class B2WorldCreator {
             body.createFixture(fdef);
         }
         //create brick fixed body
-        for(RectangleMapObject object: map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
-            Rectangle rect = object.getRectangle();
-
-            new Brick(screen, object);
-        }
-        //create coin fixed body
-        for(RectangleMapObject object: map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
-            new Coin(screen, object);
-        }
+//        for(RectangleMapObject object: map.getLayers().get(2).getObjects().getByType(RectangleMapObject.class)){
+//            Rectangle rect = object.getRectangle();
+//
+//            new Brick(screen, object);
+//        }
+//        //create coin fixed body
+//        for(RectangleMapObject object: map.getLayers().get(3).getObjects().getByType(RectangleMapObject.class)) {
+//            new Coin(screen, object);
+//        }
 
         //goomba
-        goombas = new Array<Goomba>();
-        for(RectangleMapObject object: map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
-            Rectangle rect = object.getRectangle();
-            goombas.add(new Goomba(screen, rect.getX() / MarioBros.PPM, rect.getY() / MarioBros.PPM));
-        }
+//        goombas = new Array<Goomba>();
+//        for(RectangleMapObject object: map.getLayers().get(6).getObjects().getByType(RectangleMapObject.class)) {
+//            Rectangle rect = object.getRectangle();
+//            goombas.add(new Goomba(screen, rect.getX() / MarioBros.PPM, rect.getY() / MarioBros.PPM));
+//        }
     }
 
-    public Array<Goomba> getGoombas() {
-        return goombas;
-    }
+//    public Array<Goomba> getGoombas() {
+//        return goombas;
+//    }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -11,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.gxiv.mario.MarioBros;
 import com.gxiv.mario.Screen.PlayScreen;
+import com.gxiv.mario.Sprites.Bullets.FireBall;
 
 public class Mario extends Sprite {
     public enum State {FALLING, JUMPING, STANDING, RUNNING, GROWING, DEAD};
@@ -35,6 +37,9 @@ public class Mario extends Sprite {
     private boolean timeToDefineBigMario;
     private boolean timeToReDefineMario;
     private boolean marioIsDead;
+    private PlayScreen screen;
+
+    private Array<FireBall> fireballs;
 
     public Mario(PlayScreen screen){
         this.world = screen.getWorld();
@@ -74,6 +79,8 @@ public class Mario extends Sprite {
 
         setBounds(0, 0, 16 / MarioBros.PPM, 16 / MarioBros.PPM);
         setRegion(marioStand);
+
+        fireballs = new Array<FireBall>();
     }
 
     public void update(float dt){
@@ -86,6 +93,12 @@ public class Mario extends Sprite {
             defineBigMario();
         if(timeToReDefineMario)
             redefineMario();
+
+        for(FireBall  ball : fireballs) {
+            ball.update(dt);
+            if(ball.isDestroyed())
+                fireballs.removeValue(ball, true);
+        }
     }
 
     public boolean isBig(){
@@ -282,5 +295,15 @@ public class Mario extends Sprite {
 
         b2body.createFixture(fdef).setUserData(this);
 
+    }
+
+    public void fire(){
+        fireballs.add(new FireBall(screen, b2body.getPosition().x, b2body.getPosition().y, runningRight ? true : false));
+    }
+
+    public void draw(Batch batch){
+        super.draw(batch);
+        for(FireBall ball : fireballs)
+            ball.draw(batch);
     }
 }
